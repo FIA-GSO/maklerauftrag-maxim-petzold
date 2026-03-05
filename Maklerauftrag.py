@@ -1,98 +1,121 @@
-# Überschrift des Programms ausgeben
+# Überschrift des Programms
 print("FLÄCHENRECHNER")
-print("=" * 40)
+print("========================================")
 
-# Liste für alle Räume (Name + berechnete Fläche)
+# Liste zum Speichern aller Räume (Name + Fläche)
 raeume = []
 
-# Variable für die gesamte Fläche aller Räume
-gesamt = 0.0
+# Variable für die gesamte Wohnfläche
+gesamt = 0
 
-# Hauptschleife: läuft so lange, bis der Benutzer "nein" eingibt
-while True:
+# Steuerungsvariable für die Hauptschleife
+fertig = False
 
-    # Raumname abfragen
-    name = input("\nRaumname: ")
+# Hauptschleife läuft so lange, bis der Benutzer "nein" eingibt
+while fertig == False:
 
-    # Prüfen, ob ein Name eingegeben wurde
+    # Benutzer gibt den Namen des Raumes ein
+    name = input("Raumname eingeben: ")
+
+    # Falls kein Name eingegeben wurde
     if name == "":
-        print("Name darf nicht leer sein.")
-        continue  # Zurück zum Anfang der Schleife
-
-    # Raumtyp auswählen
-    print("1 = Rechteck")
-    print("2 = Mit Einbuchtungen")
-    typ = input("Auswahl (1/2): ")
-
-    # Fall 1: Einfacher rechteckiger Raum
-    # Fläche = Länge * Breite
-    if typ == "1":
-        a = float(input("Länge: ").replace(",", "."))
-        b = float(input("Breite: ").replace(",", "."))
-        flaeche = a * b
-
-    # Fall 2: Raum mit Einbuchtungen
-    # Erst Gesamtfläche berechnen,
-    # dann Einbuchtungen abziehen
-    elif typ == "2":
-        L = float(input("Außen-Länge: ").replace(",", "."))
-        B = float(input("Außen-Breite: ").replace(",", "."))
-        flaeche = L * B
-
-        # Schleife für beliebig viele Einbuchtungen
-        while True:
-            weiter = input("Einbuchtung hinzufügen? (ja/nein): ").lower()
-
-            # Wenn keine weitere Einbuchtung gewünscht ist
-            if weiter == "nein":
-                break
-
-            # Einbuchtung hinzufügen und Fläche abziehen
-            if weiter == "ja":
-                a = float(input("  Länge: ").replace(",", "."))
-                b = float(input("  Breite: ").replace(",", "."))
-                flaeche -= a * b
-
-            # Ungültige Eingabe
-            else:
-                print("Bitte ja oder nein eingeben.")
-
-    # Ungültige Auswahl beim Raumtyp
+        print("Kein Name eingegeben...")
     else:
-        print("Ungültige Auswahl.")
-        continue
 
-    # Raum zur Liste hinzufügen
-    # (Name und berechnete Fläche)
-    raeume.append((name, flaeche))
+        # Auswahl der Raumform
+        print("Was für ein Raum?")
+        print("1 Rechteck")
+        print("2 Mit Einbuchtung")
 
-    # Fläche zur Gesamtfläche addieren
-    gesamt += flaeche
+        auswahl = input("Bitte 1 oder 2 eingeben: ")
 
-    # Ergebnis für diesen Raum anzeigen
-    print(f"{name}: {flaeche:.2f} m²")
+        # -------------------------
+        # OPTION 1: Rechteckiger Raum
+        # -------------------------
+        if auswahl == "1":
 
-    # Aktuelle Gesamtfläche anzeigen
-    print(f"Gesamt bisher: {gesamt:.2f} m²")
+            # Länge und Breite einlesen
+            # Komma wird durch Punkt ersetzt (wichtig für float)
+            laenge = input("Länge in m eingeben: ").replace(",", ".")
+            breite = input("Breite in m eingeben: ").replace(",", ".")
 
-    # Benutzer fragen, ob ein weiterer Raum berechnet werden soll
-    stop = input("Weiteren Raum berechnen? (ja/nein): ").lower()
+            # Umwandlung in Dezimalzahlen
+            laenge = float(laenge)
+            breite = float(breite)
 
-    # Wenn nein → Schleife beenden
-    if stop == "nein":
-        break
+            # Flächenberechnung (Länge × Breite)
+            flaeche = laenge * breite
+
+            print(f'Fläche ist: {flaeche} m²')
+
+        # -------------------------
+        # OPTION 2: Raum mit Einbuchtung
+        # -------------------------
+        elif auswahl == "2":
+
+            # Außenmaße des Raumes
+            L = float(input("Außen Länge in m: ").replace(",", "."))
+            B = float(input("Außen Breite in m: ").replace(",", "."))
+
+            # Grundfläche berechnen
+            flaeche = L * B
+
+            # Schleife für mehrere Einbuchtungen
+            nochwas = True
+
+            while nochwas:
+
+                frage = input("Einbuchtung? ja/nein: ")
+
+                if frage == "ja":
+
+                    # Maße der Einbuchtung
+                    a = float(input("Länge in m von Einbuchtung: ").replace(",", "."))
+                    b = float(input("Breite in m von Einbuchtung: ").replace(",", "."))
+
+                    # Fläche der Einbuchtung wird abgezogen
+                    flaeche = flaeche - (a * b)
+
+                    print(f'Neue Fläche: {flaeche} m²')
+
+                elif frage == "nein":
+                    # Keine weitere Einbuchtung → Schleife beenden
+                    nochwas = False
+                else:
+                    print("Nicht verstanden...")
+
+        # -------------------------
+        # Falsche Eingabe bei der Auswahl
+        # -------------------------
+        else:
+            print("Falsche Eingabe")
+            flaeche = 0  # Damit keine Fehlermeldung entsteht
+
+        # Raumname und berechnete Fläche speichern
+        raeume.append([name, flaeche])
+
+        # Fläche zur Gesamtfläche addieren
+        gesamt = gesamt + flaeche
+
+        print(f'Bisherige Gesamtfläche: {gesamt} m²')
+
+        # Benutzer fragen, ob ein weiterer Raum eingegeben werden soll
+        ende = input("Noch ein Raum? ja/nein: ")
+
+        if ende == "nein":
+            fertig = True  # Hauptschleife beenden
 
 
-# Übersicht aller Räume
-print("\nÜBERSICHT")
-print("=" * 40)
+# -------------------------
+# AUSGABE DER ERGEBNISSE
+# -------------------------
+
+print("\nErgebnis:")
+print("----------------------------------------")
 
 # Alle gespeicherten Räume ausgeben
-for name, flaeche in raeume:
-    print(f"{name}: {flaeche:.2f} m²")
+for eintrag in raeume:
+    print(eintrag[0], ":", eintrag[1], "m²")
 
-# Trennlinie
-print("-" * 40)
-
-# Gesamtfläche ausgeben
-print(f"Gesamtfläche: {gesamt:.2f} m²")
+print("----------------------------------------")
+print(f'Gesamtfläche ist: {gesamt} m²')
